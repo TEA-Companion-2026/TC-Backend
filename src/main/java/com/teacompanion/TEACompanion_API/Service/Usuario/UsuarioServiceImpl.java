@@ -3,6 +3,7 @@ package com.teacompanion.TEACompanion_API.Service.Usuario;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.teacompanion.TEACompanion_API.DTO.Usuario.UsuarioDTO;
@@ -18,6 +19,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Autowired
     private UsuarioMapper usuarioMapper;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public List<UsuarioDTO> getAll() {
@@ -37,8 +41,10 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public UsuarioDTO store(UsuarioDTO dto) {
-        Usuario usuario = usuarioRepository.save(usuarioMapper.toEntity(dto));
-        return usuarioMapper.toDTO(usuario);
+        Usuario entity = usuarioMapper.toEntity(dto);
+        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+        entity = usuarioRepository.save(entity);
+        return usuarioMapper.toDTO(entity);
     }
 
     @Override
