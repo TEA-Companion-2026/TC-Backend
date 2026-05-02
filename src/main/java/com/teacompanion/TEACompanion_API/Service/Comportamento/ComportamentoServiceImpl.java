@@ -7,9 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.teacompanion.TEACompanion_API.DTO.Comportamento.ComportamentoDTO;
 import com.teacompanion.TEACompanion_API.DTO.Comportamento.ComportamentoMapper;
 import com.teacompanion.TEACompanion_API.Model.Comportamento;
+import com.teacompanion.TEACompanion_API.Model.Usuario;
 import com.teacompanion.TEACompanion_API.Repository.ComportamentoRepository;
 
 import jakarta.persistence.EntityNotFoundException;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,11 +28,12 @@ public class ComportamentoServiceImpl implements ComportamentoService {
 
     @Override
     @Transactional
-    public ComportamentoDTO criar(ComportamentoDTO dto) {
-        Comportamento comportamento = new Comportamento();
-        copiarDtoParaEntidade(dto, comportamento);
+    public ComportamentoDTO criar(ComportamentoDTO dto, Usuario autor) {
+        Comportamento comportamento = comportamentoMapper.toEntity(dto);
+        comportamento.setData(LocalDate.now());
+        comportamento.setAutor(autor);
         
-        comportamento = comportamentoRepository.save(comportamento);
+        comportamentoRepository.save(comportamento);
         return comportamentoMapper.toDTO(comportamento);
     }
 
@@ -55,7 +59,7 @@ public class ComportamentoServiceImpl implements ComportamentoService {
         Comportamento comportamento = comportamentoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Comportamento não encontrado com o ID: " + id));
         
-        copiarDtoParaEntidade(dto, comportamento);
+        comportamentoMapper.updateEntityFromDTO(comportamento, dto);
         comportamento = comportamentoRepository.save(comportamento);
         
         return comportamentoMapper.toDTO(comportamento);
@@ -68,18 +72,5 @@ public class ComportamentoServiceImpl implements ComportamentoService {
             throw new EntityNotFoundException("Comportamento não encontrado com o ID: " + id);
         }
         comportamentoRepository.deleteById(id);
-    }
-
-    // Método utilitário para mapear DTO -> Entidade
-    private void copiarDtoParaEntidade(ComportamentoDTO dto, Comportamento entidade) {
-        entidade.setData(dto.getData());
-        entidade.setObservacao(dto.getObservacao());
-
-        // Busca o TipoComportamento no banco para associar a FK corretamente
-        // if (dto.tipoComportamentoId() != null) {
-        //     TipoComportamento tipo = tipoComportamentoRepository.findById(dto.tipoComportamentoId())
-        //             .orElseThrow(() -> new EntityNotFoundException("Tipo de Comportamento não encontrado"));
-        //     entidade.setTipoComportamento(tipo);
-        // }
     }
 }
