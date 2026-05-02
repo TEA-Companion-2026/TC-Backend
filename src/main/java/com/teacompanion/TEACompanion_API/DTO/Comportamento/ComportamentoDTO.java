@@ -1,13 +1,12 @@
 package com.teacompanion.TEACompanion_API.DTO.Comportamento;
 
-import java.time.LocalDate;
-
+import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
 public class ComportamentoDTO{
     Long idComportamento;
-    LocalDate data;
+    LocalDateTime data;
     String observacao;
     Long tipoComportamentoId;
 }

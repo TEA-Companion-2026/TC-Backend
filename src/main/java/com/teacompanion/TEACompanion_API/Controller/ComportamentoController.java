@@ -27,15 +27,15 @@ public class ComportamentoController {
 
     // READ (All) - GET /comportamentos
     @GetMapping
-    public ResponseEntity<List<ComportamentoDTO>> listarTodos() {
-        List<ComportamentoDTO> lista = comportamentoService.listarTodos();
+    public ResponseEntity<List<ComportamentoDTO>> listarTodos(@AuthenticationPrincipal Usuario usuarioLogado) {
+        List<ComportamentoDTO> lista = comportamentoService.listarComportamentosFiltrados(usuarioLogado);
         return ResponseEntity.ok(lista);
     }
 
     // READ (By ID) - GET /comportamentos/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<ComportamentoDTO> buscarPorId(@PathVariable Long id) {
-        ComportamentoDTO dto = comportamentoService.buscarPorId(id);
+    public ResponseEntity<ComportamentoDTO> buscarPorId(@PathVariable Long id, @AuthenticationPrincipal Usuario usuarioLogado) {
+        ComportamentoDTO dto = comportamentoService.buscarPorId(id, usuarioLogado);
         return ResponseEntity.ok(dto);
     }
 

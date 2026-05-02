@@ -1,6 +1,6 @@
 package com.teacompanion.TEACompanion_API.Model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,7 +26,7 @@ public class Comportamento {
     private Long idComportamento;
 
     @Column(nullable = false)
-    private LocalDate data;
+    private LocalDateTime data;
 
     @Column(length = 500)
     private String observacao;
