@@ -32,4 +32,12 @@ build/
 ### VS Code ###
 .vscode/
 
+# Ignorar arquivos do banco de dados SQLite
 *.db
+*.sqlite
+*.sqlite3
+
+# (Opcional) Ignorar arquivos temporários que o SQLite cria quando está aberto
+*.db-journal
+*.db-shm
+*.db-wal

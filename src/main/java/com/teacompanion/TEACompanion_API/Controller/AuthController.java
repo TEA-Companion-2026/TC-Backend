@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teacompanion.TEACompanion_API.DTO.Usuario.LoginDTO;
+import com.teacompanion.TEACompanion_API.DTO.Usuario.LoginResponseDTO;
 import com.teacompanion.TEACompanion_API.Model.Usuario;
 import com.teacompanion.TEACompanion_API.Service.Auth.TokenService;
 
@@ -23,13 +24,18 @@ public class AuthController {
     private TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginDTO dto) {
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO dto) {
         var authenticationToken = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
 
         var authentication = authManager.authenticate(authenticationToken);
 
         var tokenJWT = tokenService.gerarToken((Usuario) authentication.getPrincipal());
 
-        return ResponseEntity.ok(tokenJWT);
+        LoginResponseDTO responseDTO = new LoginResponseDTO();
+
+        responseDTO.setEmail(dto.getEmail());
+        responseDTO.setToken(tokenJWT);
+
+        return ResponseEntity.ok(responseDTO);
     }
 }
