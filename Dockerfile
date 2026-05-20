@@ -1,34 +1,34 @@
-# Estágio 1: Build da aplicação usando Maven e Temurin Java 25
-FROM maven:3.9.6-eclipse-temurin-25 AS build
+# Estágio 1: Build da aplicação usando a imagem que você encontrou + instalação do Maven
+FROM openjdk:25-ea-21-jdk-slim AS build
 WORKDIR /app
 
-# Copia o pom.xml e baixa as dependências (otimiza o cache do Docker)
+# Instala o Maven manualmente (leve e direto dos repositórios oficiais)
+RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
+
+# Copia as configurações do projeto para baixar as dependências
 COPY pom.xml .
 RUN mvn dependency:go-offline -B
 
-# Copia o código fonte e realiza o build do JAR executável
+# Copia o código fonte e gera o JAR
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-# Estágio 2: Ambiente de execução leve com Temurin Java 25 e suporte a SQLite
-FROM eclipse-temurin:25-jre-jammy
+# Estágio 2: Ambiente de execução leve com o mesmo JDK 25
+FROM openjdk:25-ea-21-jdk-slim
 WORKDIR /app
 
-# Instala o utilitário do sqlite3 necessário para ler o banco se precisar de debug no container
+# Instala o utilitário do sqlite3 para a persistência e diagnósticos se necessário
 RUN apt-get update && apt-get install -y sqlite3 && rm -rf /var/lib/apt/lists/*
 
-# CRUCIAL: Cria o diretório onde o volume persistente do Render será montado
+# Cria a pasta do volume do Render onde o SQLite salvará os dados com segurança
 RUN mkdir -p /data && chmod 777 /data
 
-# Copia o JAR gerado no estágio anterior
+# Copia o JAR do estágio de build
 COPY --from=build /app/target/*.jar app.jar
 
-# Expõe a porta padrão
 EXPOSE 8080
 
-# Define variáveis de ambiente padrão para o Spring
 ENV PORT=8080
 ENV SPRING_DATASOURCE_URL=jdbc:sqlite:/data/mydb.db
 
-# Comando para iniciar a aplicação apontando para a porta dinâmica do Render
 ENTRYPOINT ["sh", "-c", "java -jar app.jar --server.port=${PORT}"]
