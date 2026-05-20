@@ -3,6 +3,7 @@ package com.teacompanion.TEACompanion_API.DTO.Comportamento;
 
 import org.springframework.stereotype.Component;
 
+import com.teacompanion.TEACompanion_API.Enum.TipoComportamentoEnum;
 import com.teacompanion.TEACompanion_API.Model.Comportamento;
 
 @Component
@@ -13,12 +14,7 @@ public class ComportamentoMapper {
         entity.setIdComportamento(dto.getIdComportamento());
         entity.setData(dto.getData());
         entity.setObservacao(dto.getObservacao());
-
-        // if (dto.getTipoComportamentoId() != null) {
-        //     TipoComportamento tipo = new TipoComportamento();
-        //     tipo.setId(dto.getTipoComportamentoId()); // Assumindo que a PK de TipoComportamento se chama 'id'
-        //     entity.setTipoComportamento(tipo);
-        // }
+        entity.setTipoComportamento(TipoComportamentoEnum.valueOf(dto.getTipoComportamento()));
 
         return entity;
     }
@@ -28,11 +24,7 @@ public class ComportamentoMapper {
         dto.setIdComportamento(entity.getIdComportamento());
         dto.setData(entity.getData());
         dto.setObservacao(entity.getObservacao());
-
-        // // Tratamento da Chave Estrangeira (FK)
-        // if (entity.getTipoComportamento() != null) {
-        //     dto.setTipoComportamentoId(entity.getTipoComportamento().getId());
-        // }
+        dto.setTipoComportamento(entity.getTipoComportamento().getNome());
 
         return dto;
     }
@@ -40,13 +32,6 @@ public class ComportamentoMapper {
     public void updateEntityFromDTO(Comportamento entity, ComportamentoDTO dto) {
         entity.setData(dto.getData());
         entity.setObservacao(dto.getObservacao());
-
-        // if (dto.getTipoComportamentoId() != null) {
-        //     TipoComportamento tipo = new TipoComportamento();
-        //     tipo.setId(dto.getTipoComportamentoId());
-        //     entity.setTipoComportamento(tipo);
-        // } else {
-        //     entity.setTipoComportamento(null); // Caso o envio seja nulo, remove o relacionamento
-        // }
+        entity.setTipoComportamento(TipoComportamentoEnum.valueOf(dto.getTipoComportamento()));
     }
 }

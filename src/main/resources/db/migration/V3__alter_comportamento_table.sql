@@ -1,0 +1,2 @@
+ALTER TABLE comportamento 
+ADD COLUMN tipo_comportamento TEXT NOT NULL DEFAULT 'NÃO INFORMADO';

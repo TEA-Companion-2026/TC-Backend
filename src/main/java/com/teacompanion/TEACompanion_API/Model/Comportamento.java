@@ -2,6 +2,8 @@ package com.teacompanion.TEACompanion_API.Model;
 
 import java.time.LocalDateTime;
 
+import com.teacompanion.TEACompanion_API.Enum.TipoComportamentoEnum;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -31,9 +33,8 @@ public class Comportamento {
     @Column(length = 500)
     private String observacao;
 
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "id_tipo_comportamento", nullable = false)
-    // private TipoComportamento tipoComportamento;
+    @JoinColumn(name = "tipo_comportamento", nullable = false)
+    private TipoComportamentoEnum tipoComportamento;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", nullable = false)
