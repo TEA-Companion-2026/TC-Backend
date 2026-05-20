@@ -1,5 +1,5 @@
-# Estágio 1: Build da aplicação usando Maven e JDK 17
-FROM maven:3.8.5-openjdk-17-slim AS build
+# Estágio 1: Build da aplicação usando Maven e Temurin Java 25
+FROM maven:3.9.6-eclipse-temurin-25 AS build
 WORKDIR /app
 
 # Copia o pom.xml e baixa as dependências (otimiza o cache do Docker)
@@ -10,11 +10,11 @@ RUN mvn dependency:go-offline -B
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-# Estágio 2: Ambiente de execução leve com suporte a SQLite
-FROM openjdk:25-jdk-slim
+# Estágio 2: Ambiente de execução leve com Temurin Java 25 e suporte a SQLite
+FROM eclipse-temurin:25-jre-jammy
 WORKDIR /app
 
-# Instala o utilitário do sqlite3 (opcional, mas útil se precisar testar o ficheiro localmente)
+# Instala o utilitário do sqlite3 necessário para ler o banco se precisar de debug no container
 RUN apt-get update && apt-get install -y sqlite3 && rm -rf /var/lib/apt/lists/*
 
 # CRUCIAL: Cria o diretório onde o volume persistente do Render será montado
@@ -23,7 +23,7 @@ RUN mkdir -p /data && chmod 777 /data
 # Copia o JAR gerado no estágio anterior
 COPY --from=build /app/target/*.jar app.jar
 
-# Expõe a porta padrão (o Render configurará a variável PORT automaticamente)
+# Expõe a porta padrão
 EXPOSE 8080
 
 # Define variáveis de ambiente padrão para o Spring
