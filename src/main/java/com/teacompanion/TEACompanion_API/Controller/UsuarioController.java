@@ -9,6 +9,7 @@ import com.teacompanion.TEACompanion_API.Service.Usuario.UsuarioService;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,8 +37,8 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public UsuarioDTO create(@RequestBody UsuarioDTO dto) {
-        return usuarioService.store(dto);
+    public ResponseEntity<UsuarioDTO> create(@RequestBody UsuarioDTO dto) {
+        return ResponseEntity.ok(usuarioService.store(dto));
     }
     
     @PutMapping("/{id_usuario}")
