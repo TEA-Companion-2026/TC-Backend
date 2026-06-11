@@ -41,3 +41,6 @@ build/
 *.db-journal
 *.db-shm
 *.db-wal
+
+GEMINI.md
+LOG.md
