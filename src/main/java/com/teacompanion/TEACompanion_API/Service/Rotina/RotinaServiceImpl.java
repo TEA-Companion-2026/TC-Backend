@@ -14,6 +14,7 @@ import com.teacompanion.TEACompanion_API.Model.Individuo;
 import com.teacompanion.TEACompanion_API.Model.Rotina;
 import com.teacompanion.TEACompanion_API.Repository.IndividuoRepository;
 import com.teacompanion.TEACompanion_API.Repository.RotinaRepository;
+import com.teacompanion.TEACompanion_API.Validator.RotinaValidator;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -29,13 +30,15 @@ public class RotinaServiceImpl implements RotinaService {
     @Autowired
     private RotinaMapper rotinaMapper;
 
+    @Autowired
+    private RotinaValidator rotinaValidator;
+
     @Override
     @Transactional
     public RotinaDTO criar(RotinaDTO dto) {
+        rotinaValidator.validarParaCriacao(dto);
+
         Individuo individuo = buscarIndividuo(dto.getIdIndividuo());
-
-        validarDiaSemana(dto.getDiaSemana());
-
         Rotina rotina = rotinaMapper.toEntity(dto);
         rotina.setIndividuo(individuo);
 
@@ -46,8 +49,7 @@ public class RotinaServiceImpl implements RotinaService {
     @Override
     @Transactional(readOnly = true)
     public RotinaDTO buscarPorId(Long id) {
-        Rotina rotina = buscarRotina(id);
-        return rotinaMapper.toDTO(rotina);
+        return rotinaMapper.toDTO(buscarRotina(id));
     }
 
     @Override
@@ -68,7 +70,7 @@ public class RotinaServiceImpl implements RotinaService {
     @Transactional(readOnly = true)
     public List<RotinaDTO> listarPorIndividuoEDia(Long idIndividuo, String diaSemana) {
         Individuo individuo = buscarIndividuo(idIndividuo);
-        DiaSemanaEnum dia = validarDiaSemana(diaSemana);
+        DiaSemanaEnum dia = rotinaValidator.parseDiaSemana(diaSemana);
 
         return rotinaRepository.findAllByIndividuoAndDiaSemana(individuo, dia).stream()
                 .sorted((a, b) -> a.getHorario().compareTo(b.getHorario()))
@@ -79,10 +81,9 @@ public class RotinaServiceImpl implements RotinaService {
     @Override
     @Transactional
     public RotinaDTO atualizar(Long id, RotinaDTO dto) {
+        rotinaValidator.validarParaAtualizacao(dto);
+
         Rotina rotina = buscarRotina(id);
-
-        validarDiaSemana(dto.getDiaSemana());
-
         rotinaMapper.updateEntityFromDTO(rotina, dto);
         rotina = rotinaRepository.save(rotina);
 
@@ -98,7 +99,7 @@ public class RotinaServiceImpl implements RotinaService {
         rotinaRepository.deleteById(id);
     }
 
-    // ---------- helpers privados ----------
+    // ---------- helpers de busca ----------
 
     private Rotina buscarRotina(Long id) {
         return rotinaRepository.findById(id)
@@ -106,19 +107,7 @@ public class RotinaServiceImpl implements RotinaService {
     }
 
     private Individuo buscarIndividuo(Long idIndividuo) {
-        if (idIndividuo == null) {
-            throw new IllegalArgumentException("O ID do indivíduo é obrigatório");
-        }
         return individuoRepository.findById(idIndividuo)
                 .orElseThrow(() -> new EntityNotFoundException("Indivíduo não encontrado com o ID: " + idIndividuo));
-    }
-
-    private DiaSemanaEnum validarDiaSemana(String diaSemana) {
-        try {
-            return DiaSemanaEnum.valueOf(diaSemana);
-        } catch (IllegalArgumentException | NullPointerException e) {
-            throw new IllegalArgumentException("Dia da semana inválido: '" + diaSemana +
-                    "'. Valores aceitos: SEGUNDA, TERCA, QUARTA, QUINTA, SEXTA, SABADO, DOMINGO");
-        }
     }
 }
