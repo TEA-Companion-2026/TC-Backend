@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.teacompanion.TEACompanion_API.DTO.Rotina.RotinaDTO;
 import com.teacompanion.TEACompanion_API.DTO.Rotina.RotinaMapper;
+import com.teacompanion.TEACompanion_API.Enum.DiaSemanaEnum;
 import com.teacompanion.TEACompanion_API.Model.Individuo;
 import com.teacompanion.TEACompanion_API.Model.Rotina;
 import com.teacompanion.TEACompanion_API.Repository.IndividuoRepository;
