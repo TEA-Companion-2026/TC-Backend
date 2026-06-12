@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -20,7 +21,7 @@ import lombok.Data;
 @DiscriminatorColumn(name = "nivel_acesso")
 public class Usuario implements UserDetails {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Integer id_usuario;
     private String username;
     private String password;
