@@ -9,5 +9,5 @@ import com.teacompanion.TEACompanion_API.Model.Rotina;
 
 @Repository
 public interface RotinaRepository extends JpaRepository<Rotina, Long> {
-    List<Rotina> findByIndividuoId_usuario(Integer idIndividuo);
+    List<Rotina> findByIndividuo_Id_usuario(Integer id_usuario);
 }

@@ -43,7 +43,7 @@ public class RotinaServiceImpl implements RotinaService {
 
     @Override
     public List<RotinaDTO> listarPorIndividuo(Integer idIndividuo) {
-        return rotinaRepository.findByIndividuoId_usuario(idIndividuo)
+        return rotinaRepository.findByIndividuo_Id_usuario(idIndividuo)
                 .stream()
                 .map(rotinaMapper::toDTO)
                 .toList();
